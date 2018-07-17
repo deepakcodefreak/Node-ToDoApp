@@ -1,45 +1,37 @@
-// const MongoClient = require('mongodb').MongoClient;
 const {MongoClient,ObjectID} = require('mongodb');
-const obj = new ObjectID;
-console.log(obj);
-//
-// const user =  {name:'Depak',age:18}
-// var {name} = user;
-// console.log(name);
-
-
-
-MongoClient.connect('mongodb://localhost:27017/ToDoApp',(error,client) => {
-  if (error) {
-    return console.log(`We are unable to connect MonGoDB Server`);
+MongoClient.connect(`mongodb://localhost:27017`,(err,client)=> {
+  if (err) {
+    return console.log(`Unable to connect to DataBase`, err);
   }
-  console.log(`Connected to MongoDB Server`);
+  console.log(`Connected to DataBase`);
+  const db = client.db('ToDoApp');
 
-  const db = client.db('ToDoApp')
-
-  // db.collection('Todos').find({
-  //   _id:new ObjectID('5b4a49ac26dc064b527e1c1a')
-  // }).toArray().then((docs)=>{
-  //   console.log(`Todos  :`);
+  // db.collection('Todos').find().count().then((docs)=>{
+  //   console.log(`Todos:`);
   //   console.log(JSON.stringify(docs,undefined,2));
-  // },(err) => {
-  //   console.log(`Unable to fetch todos`);
-  // });
+  // },(err)=>{
+  //   console.log(`Unable to fetch ToDos...`,err);
   //
-  db.collection('Users').find().count().then((count)=>{
-    console.log(`Todos  :${count}`);
-    // console.log(JSON.stringify(count,undefined,2));
-  },(err) => {
-    console.log(`Unable to fetch todos`);
-  });
+  // })
+  // //
+  // db.collection('Todos').find({_id:
+  //   new ObjectID('5b4a2e066e35c81f098b53f2')
+  // }).toArray().then((docs)=>{
+  //   console.log(`Todos:`);
+  //   console.log(JSON.stringify(docs,undefined,2));
+  // },(err)=>{
+  //   console.log(`Unable to fetch ToDos...`,err);
+  //
+  // })
 
-
-db.collection('Users').find({name:'Deepak'}).toArray().then((docs) => {
-  console.log(`Users with name Deepak`);
+db.collection('Users').find({name:'Deepak'}).toArray().then((docs)=>{
+  console.log(`Required ToDos:`);
   console.log(JSON.stringify(docs,undefined,2));
-},(error)=>{
-  console.log(`Unable to fetch data`, error);
+},(err)=>{
+  console.log(`Unable to fetch required ToDos...`);
+  console.log(err);
 })
 
+
 client.close();
-});
+})
