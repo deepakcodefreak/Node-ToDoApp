@@ -44,11 +44,7 @@ it('Should not add a note', (done) => {
       expect(todos.length).toBe(0)
       done();
     }).catch((err)=>done(err))
-
-
   })
 });
-
-
 
 })
