@@ -57,15 +57,20 @@ it('Should not add a note', (done) => {
   })
 });
 
-it('Should return notes', (done) => {
-  request(app)
-  .get('/todos')
-  .expect(200)
-  .expect((todo)=>{
-    expect(todo.body.todos.length).toBe(2)
-  })
-  .end(done);
 
-});
+})
+
+describe('GET /todos',()=>{
+
+  it('Should return notes', (done) => {
+    request(app)
+    .get('/todos')
+    .expect(200)
+    .expect((todo)=>{
+      expect(todo.body.todos.length).toBe(2)
+    })
+    .end(done);
+
+  });
 
 })
