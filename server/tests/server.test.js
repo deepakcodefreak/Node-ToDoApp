@@ -11,12 +11,12 @@ var todos = [{
 },{
   _id: new ObjectID(),
   text:`task no. 2`
-}]
+}];
 
 beforeEach((done)=>{
   ToDo.remove({}).then(()=>{
     return ToDo.insertMany(todos);
-  }).then(()=>done());
+  }).then(()=> done());
 })
 
 
@@ -109,6 +109,50 @@ it('Should return 404 for invalid object ID', (done) => {
 
 });
 
+})
+
+
+describe('DELETE /todos:id',()=>{
+
+  it('Should delete the todo', (done) => {
+
+    var hexId = todos[1]._id.toHexString();
+
+    request(app)
+    .delete(`/todos/${hexId}`)
+    .expect(200)
+    .expect((res)=>{
+      expect(res.body.todo._id).toBe(hexId)
+    })
+    .end((err,res) => {
+      if (err) {
+        return done(err)
+      }
+
+      ToDo.findById(hexId).then((todo) => {
+        expect(todo).toNotExist();
+        done();
+      }).catch((err) => {done(err)})
+
+
+    })
+  });
+
+  it('Should return 404 if todo not found', (done) => {
+    var hexId = new ObjectID().toHexString();
+    request(app)
+    .delete(`/todos/${hexId}`)
+    .expect(404)
+    .end(done);
+  });
+
+  it('Should return 404 if ObjectID is invalid', (done) => {
+    var hexId = `1234abc`;
+    request(app)
+    .delete(`/todos/${hexId}`)
+    .expect(404)
+    .end(done);
+  });
 
 
 })
