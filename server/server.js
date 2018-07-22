@@ -27,6 +27,47 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+
+app.patch('/todos/:id',(req,res)=>{
+  // console.log('hello guys');
+  // res.send('hello guys');
+  var id = req.params.id;
+  // res.send(id);
+
+  var body = _.pick(req.body,['text','completed']);
+
+
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
+  }
+
+   if (_.isBoolean(body.completed) && body.completed) {
+     body.completedAt = new Date().getTime(); //return js time stamp
+
+   }else {
+     body.completed = false;
+     body.completedAt = null;
+   }
+
+   ToDo.findByIdAndUpdate(id,{$set:body},{new:true}).then((todo) => {
+     if (!todo) {
+       return res.status(404).send();
+     }
+     res.send({todo});
+   }).catch((err) => {
+     res.status(400).send()
+   })
+
+
+
+
+
+})
+
+
+
+
+
 app.post('/todos',(req,res)=>{
   var newtodo = new ToDo({
     text:req.body.text
@@ -88,33 +129,17 @@ ToDo.findByIdAndRemove(id).then((todo) => {
 
 })
 
-app.patch('/todos/:id ', (req,res)=>{
-  var id = req.params.id;
-  var body = _.pick(req.body,['text','completed']);
 
 
-  if (!ObjectID.isValid(id)) {
-    return res.status(404).send();
-  }
+//
+// app.patch('/todos/:id', function (req, res) {
+//     var updateObject = req.body; // {last_name : "smith", age: 44}
+//     var id = req.params.id;
+//     var ID = new ObjectID(id);
+//     ToDo.update({_id  : ID }, {$set: updateObject});
+// });
 
-   if (_.isBoolean(body.completed) && body.completed) {
-     body.completedAt = new Date().getTime(); //return js time stamp
 
-   }else {
-     body.completed = false;
-     body.completedAt = null;
-   }
-
-   ToDo.findByIdAndUpdate(id,{$set:body},{new:true}).then((todo) => {
-     if (!todo) {
-       return res.status(404).send();
-     }
-     res.send({todo});
-   }).catch((err) => {
-     res.status(400).send()
-   })
-
-})
 
 
 
