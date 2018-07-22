@@ -10,7 +10,9 @@ var todos = [{
   text:'task no. 1'
 },{
   _id: new ObjectID(),
-  text:`task no. 2`
+  text:`task no. 2`,
+  completed:true,
+  completedAt:333,
 }];
 
 beforeEach((done)=>{
@@ -59,7 +61,6 @@ it('Should not add a note', (done) => {
     }).catch((err)=>done(err))
   })
 });
-
 
 })
 
@@ -154,5 +155,46 @@ describe('DELETE /todos:id',()=>{
     .end(done);
   });
 
+
+})
+
+describe('PATCH /todos:id',()=>{
+
+it('Should update the todo', (done) => {
+  var hexId = todos[0]._id.toHexString();
+  var newtext = 'new text --- actualy udated text';
+
+  request(app)
+  .patch(`/todos/${hexId}`)
+  .send({
+    text:newtext,
+    completed:true})
+  .expect(200)
+  .expect((res)=>{
+    expect(res.body.todo.text).toBe(newtext);
+    expect(res.body.todo.completedAt).toBeA('number');
+    expect(res.body.todo.completed).toBe(true)
+  })
+  .end(done);
+
+});
+
+it('should clear completedAt when todo is not completed', (done) => {
+  var hexId = todos[1]._id.toHexString();
+  var text ='hello myNew Text';
+  request(app)
+  .patch(`/todos/${hexId}`)
+  .send({
+    text,
+    completed:false,
+  })
+  .expect(200)
+  .expect((res)=>{
+    expect(res.body.todo.text).toBe(text);
+    expect(res.body.todo.completed).toBe(false);
+    expect(res.body.todo.completedAt).toNotExist();
+  })
+  .end(done);
+});
 
 })
